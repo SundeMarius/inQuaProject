@@ -105,15 +105,3 @@ def expectation(X,positions,developCoeff,psiMatrix,E,t):
     #Expectation
     return np.dot(psiVec*X(positions),psiVecConj)*dx
 
-
-def X(x): return x**2
-
-
-H = Hamilton(V1)
-
-E, psi = np.linalg.eig(H)
-# psi[:, i] is the eigenvector corresponding to E[i]
-
-coeff = np.array([developCoeff(psi[:,j],xvalues) for j in range(acc)])
-a = expectation(X,xvalues,coeff,psi,E,10)
-print(np.real(a))
