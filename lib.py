@@ -26,7 +26,7 @@ def Hamilton(V):
 	# Make matrix for V
 	v = np.zeros((acc, acc))
 	for i in range(acc):
-		v[i][i] = xvalues[i]
+		v[i][i] = V(xvalues[i])
 
 	# Make the matrix itself
 	H = -2 * np.eye(acc, dtype=float) + np.eye(acc, k=1, dtype=float) + np.eye(acc, k=-1, dtype=float)
