@@ -3,12 +3,9 @@ import matplotlib.pyplot as plt
 
 #Variables and interval
 v0 = 0.2 #Initial speed of electron
-N = 2000 #Number of panels over the interval
-a = 0 # [m] left end of interval
-b = 1 # [m] right end of interval
-x = np.linspace(a,b,N)
-dx = (b-a)/N
-t = np.array([n*dx/v0 for n in range(N)])
+N = 50 #Number of panels over the interval
+x = np.array([n*l.dx for n in range(N)])
+t = np.array([n*l.dx/v0 for n in range(N)])
 
 #Solve the Shrodinger equation
 H = l.Hamilton(l.V1,x)
@@ -16,8 +13,10 @@ H = l.Hamilton(l.V1,x)
 #Solution (E and psiMatrix)
 E, psiMatrix = np.linalg.eigh(H)
 
+
 #Develop starting state in eigen-functions; calculate coefficients c_j
-coeff = np.array([l.developCoeff(psiMatrix[j],x,v0) for j in range(N)]) #Vector with c_j for all j
+coeff = np.array([l.developCoeff(psiMatrix[:,j],x,v0) for j in range(N)]) #Vector with c_j for all j
+print(coeff)
 
 #Expectation of x and x**2
 def X(x): return x
@@ -39,8 +38,11 @@ def X2(x): return x**2
 
 start = l.startingState(x,v0)
 start2 = np.matmul(psiMatrix,coeff)
-print(coeff)
-for i in range(N):
-    print("x=",x[i],"\tstart1=",np.real(start[i]*np.conjugate(start[i]))
-          ,"\tstart2=",np.real(start2[i]*np.conjugate(start2[i])))
+print(start)
+print(start2)
+
+plt.plot(x,start*np.conjugate(start),c="r")
+plt.plot(x,start2*np.conjugate(start2),c="g")
+plt.grid()
+plt.show()
 

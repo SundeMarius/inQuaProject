@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 hbar = 1.05457e-34  # [Js] - Reduced Planck's constant
 me = 9.10938e-31  # [kg] - Electron mass
 v0 = 0.5  # [m/s] - initial speed
-
+dx = 1e-10
 
 def V1(x):
     return 0
@@ -23,7 +23,6 @@ def Hamilton(V, positions):
 
     # Make matrix for V
     Nt = len(positions)
-    dx = (positions[Nt - 1] - positions[0]) / (Nt - 1)
     v = np.zeros((Nt, Nt))
     for i in range(Nt):
         v[i][i] = V(positions[i])
@@ -47,18 +46,17 @@ def startingState(positions, v0):
     :return: starting state evaluated at every position over the interval (complex numpy array)
     """
     Nt = len(positions)  # Number of panels over the interval
-    dx = (positions[Nt - 1] - positions[0]) / (Nt - 1)
 
     # Sigma, expectation values at t = 0
-    sigma = 10*dx
+    sigma = dx*Nt
     x0 = (positions[0]+positions[Nt-1])/2 # Midway on the interval
     k0 = me * v0 / hbar  # speed v0 [m/s] (this is the wave-number)
-    normFac = (2 * np.pi * sigma) ** (-0.25)
-    gauss = np.exp(-(positions - x0) ** 2 / (4 * sigma ** 2))
+    normFac = (2 * np.pi * sigma**2) ** (-0.25)
+    gauss = np.exp(-((positions - x0) ** 2 )/ (4 * sigma ** 2))
     planeWave = np.exp(1j * k0 * positions)
 
     # Return the starting state (gauss wave)
-    return np.array(normFac * gauss * planeWave)
+    return normFac * gauss * planeWave
 
 
 def developCoeff(psiJ, positions, v0):
@@ -69,7 +67,6 @@ def developCoeff(psiJ, positions, v0):
     :return: the coefficient c_j for the solution
     """
     Nt = len(positions)  # Number of panels over the interval
-    dx = (positions[Nt-1]-positions[0])/(Nt-1)
 
     # Check if psiJ and positions have equal lengths
     if len(psiJ) == Nt:
@@ -80,10 +77,10 @@ def developCoeff(psiJ, positions, v0):
         return 0
 
 
-def expectation(X, positions, developCoeff, psiMatrix, E, t):
+def expectation(X, positions, coeff, psiMatrix, E, t):
     """
     :param X: expectation-variable as a function (define it in advance)
-    :param developCoeff: numpy array of all the develop coefficients j (from j = 1 to N)
+    :param coeff: numpy array of all the develop coefficients j (from j = 1 to N)
     :param positions: numpy array of x_n
     :param psiMatrix: numpy array containing psi_J-vectors for J = 1 to N (Matrix of psiJ as row-vectors)
     :param E: numpy array of all the eigenvalues (each possible energy)
@@ -99,13 +96,12 @@ def expectation(X, positions, developCoeff, psiMatrix, E, t):
         :return:  psi(x,t) at position x at time t
         """
         energyCoeff = np.exp(
-            -1j * E * t / hbar) * developCoeff  # numpy array of energy factors with developCoeff. for each state j
+            -1j * E * t / hbar) * coeff  # numpy array of energy factors with coeff. for each state j
 
         return np.dot(psiMatrix[n], energyCoeff)
 
     # A psi-vector containing psi(x,t) for all positions at time t (and its conjugate)
     Nt = len(positions)  # Number of subintervals
-    dx = (positions[Nt - 1] - positions[0]) / (Nt - 1)
     psiVec = np.array([psiXn(n, t) for n in range(Nt)])
     psiVecConj = np.conjugate(psiVec)
 
