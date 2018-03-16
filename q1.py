@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 v0 = 5e-7 #Initial speed of electron
 N = 1000#Number of panels over the interval
 x = np.array([n*l.dx for n in range(N)])
-t = np.array([n*l.dx/v0 for n in range(N)])
+t = np.array([n*l.dx/v0*10e-12 for n in range(N)])  ### Har endra tidsskalaen til å være langt midre, se på fig
 
 #Solve the Shrodinger equation
 H = l.Hamilton(l.V1,x)
