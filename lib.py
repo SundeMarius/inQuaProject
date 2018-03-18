@@ -7,7 +7,7 @@ dx = 1e-11
 E = hbar**2/(2*me*(1200*dx)**2)
 # Sigma, expectation values at t = 0
 sigma = dx*10
-x0 = sigma*15  #Put the mean x at t=0 away from the walls
+x0 = sigma*45  #Put the mean x at t=0 away from the walls
 k0 = np.sqrt(2*me*E)/hbar  # wave number k [1/m]
 
 def V1(x):
@@ -15,7 +15,7 @@ def V1(x):
 
 
 def V2(x):
-	return x ** 2
+	return (x-x0*1.4)** 2
 
 
 def Hamilton(V, positions):
@@ -92,5 +92,8 @@ def expectation(X, positions, coeff, psiMatrix, E, t):
 	# Expectation
 	return np.dot(X(positions), np.absolute(psiVec)**2)*dx
 
+
 def sigmaAnalytical(t):
 	return np.sqrt((sigma)**2 + ((hbar*t)/(2*me*sigma))**2)
+
+
