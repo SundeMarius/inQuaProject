@@ -2,10 +2,10 @@ import numpy as np, lib as l
 import matplotlib.pyplot as plt
 
 #Variables and interval
-v0 = 5e-7 #Initial speed of electron
-N = 1000#Number of panels over the interval
+N = 1200#Number of panels over the interval
 x = np.array([n*l.dx for n in range(N)])
-t = np.array([n*l.dx/v0 for n in range(N)])
+v0 = l.k0*l.hbar/l.me
+t = np.array([n*l.dx/v0/N for n in range(N)])
 
 #Solve the Shrodinger equation
 H = l.Hamilton(l.V1,x)
@@ -14,7 +14,7 @@ H = l.Hamilton(l.V1,x)
 E, psiMatrix = np.linalg.eigh(H)
 
 #Develop starting state in eigen-functions; calculate coefficients c_j
-coeff = np.array([l.developCoeff(psiMatrix[:,j],x,v0) for j in range(len(x))]) #Vector with c_j for all j
+coeff = np.array([l.developCoeff(psiMatrix[:,j],x) for j in range(len(x))]) #Vector with c_j for all j
 
 #Expectation of x and x**2
 def X(x): return x
@@ -27,21 +27,27 @@ for i in range(len(t)):
     EX2[i] = l.expectation(X2,x,coeff,psiMatrix,E,t[i])
     print("it:",i+1," Expectation:",EX[i])
 
-#Calculate uncertainty delta x
+#Calculate uncertainty delta x (and analytical)
 stdX = np.sqrt(EX2-EX**2)
-#Plot expectation of x
+anaDx = l.sigmaAnalytical(t)
+
+#Plot uncertainity of x
 plt.plot(t,stdX,label=r"$\Delta X(t)$")
+plt.plot(t,anaDx,label=r"$\Delta X(t) - analytical$")
 plt.legend(loc="best")
 plt.xlabel("Time t [s]")
 plt.ylabel(r"$\sigma$ [m]")
 plt.grid()
 plt.show()
 
-# start = l.startingState(x,v0)
+
+# start = l.startingState(x)
 # start2 = np.matmul(psiMatrix,coeff)
 #
 # plt.plot(x,np.absolute(start)**2,c="r")
 # #plt.plot(x,np.absolute(start2)**2,c="g")
 # plt.grid()
 # plt.show()
+
+
 

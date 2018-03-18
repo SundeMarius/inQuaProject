@@ -3,8 +3,12 @@ import numpy as np
 
 hbar = 1.05457e-34  # [Js] - Reduced Planck's constant
 me = 9.10938e-31  # [kg] - Electron mass
-#v0 = 0.5  # [m/s] - initial speed
-dx = 1e-10
+dx = 1e-11
+E = hbar**2/(2*me*(1200*dx)**2)
+# Sigma, expectation values at t = 0
+sigma = dx*10
+x0 = sigma*15  #Put the mean x at t=0 away from the walls
+k0 = np.sqrt(2*me*E)/hbar  # wave number k [1/m]
 
 def V1(x):
 	return 0
@@ -39,31 +43,25 @@ def Hamilton(V, positions):
 	return H
 
 
-def startingState(positions, v0):
+def startingState(positions):
 	"""
 	:param positions: numpy array of the positions over the interval
-	:param v0: initial speed
 	:return: starting state evaluated at every position over the interval (complex numpy array)
 	"""
 	Nt = len(positions)  # Number of panels over the interval
 
-	# Sigma, expectation values at t = 0
-	sigma = dx*20
-	x0 = sigma*20 # Put the mean x at t=0 away from the walls
-	k0 = me * v0 / hbar  # wave number k [1/m]
-	normFac = (2 * np.pi * sigma**2) ** (-0.25)
-	gauss = np.exp(-((positions - x0) ** 2 )/ (4 * sigma ** 2))
+	normFac = (2*np.pi*sigma**2)**(-1/4)
+	gauss = np.exp(-((positions - x0)**2)/(4*sigma**2))
 	planeWave = np.exp(1j * k0 * positions)
 
 	# Return the starting state (gauss wave)
 	return normFac * gauss * planeWave
 
 
-def developCoeff(psiJ, positions, v0):
+def developCoeff(psiJ, positions):
 	"""
 	:param psiJ: array containing psi_J evaluated at every x_n
 	:param positions: array of x_n
-	:param v0: inital speed
 	:return: the coefficient c_j for the solution
 	"""
 	Nt = len(positions)  # Number of panels over the interval
@@ -71,7 +69,7 @@ def developCoeff(psiJ, positions, v0):
 	# Check if psiJ and positions have equal lengths
 	if len(psiJ) == Nt:
 		# return the summation over all positions (Dot-product of the vectors)
-		return np.dot(np.conjugate(psiJ), startingState(positions, v0))
+		return np.dot(np.conjugate(psiJ), startingState(positions))
 	else:
 		print("**error** psiJ and positions have different lengths")
 		return 0
@@ -94,5 +92,5 @@ def expectation(X, positions, coeff, psiMatrix, E, t):
 	# Expectation
 	return np.dot(X(positions), np.absolute(psiVec)**2)*dx
 
-def sigma(t):
-	return np.sqrt((20*dx)**2 + ((hbar*t)/(2*me*20*dx))**2)
+def sigmaAnalytical(t):
+	return np.sqrt((sigma)**2 + ((hbar*t)/(2*me*sigma))**2)
