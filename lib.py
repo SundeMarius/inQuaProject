@@ -16,7 +16,7 @@ def V1(x):
 
 
 def V2(x):
-	return 6e-5  * (x - 2*x0) ** 2
+	return 1e-3*(x - 2*x0) ** 2
 
 
 def Hamilton(V):
