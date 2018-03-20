@@ -8,15 +8,15 @@ eV = 1.619e-19  # [J] (1 electron Volt)
 N = 1000
 dx = 1e-10
 x = np.array([n * dx for n in range(N)])
-x0 = x[N - 1] * 1 / 5  # Wave starts at 1/5 of the whole way
+x0 = x[N - 1] * 1 / 4  # Wave starts at 1/5 of the whole way
 
 
 def V1(x):
     return 0
 
 
-def V2(x):
-    return 10 * (x - x0 * 1.3) ** 2
+def V2(pos):
+    return 6e-5*(pos - x0*2) ** 2
 
 
 def Hamilton(V):

@@ -8,10 +8,10 @@ plt.rc('font', **font)
 
 #Variables and time interval
 E = 1*l.eV
-sigma = 10*l.dx
+sigma = 20*l.dx
 k0 = np.sqrt(2*l.me*E)/l.hbar
 v0 = np.sqrt(2*E/l.me)
-t = np.array([3/5*n*l.dx/v0 for n in range(l.N)])
+t = np.array([2/4*n*l.dx/v0 for n in range(l.N)])
 
 #Solve the Shrodinger equation
 H = l.Hamilton(l.V1)
