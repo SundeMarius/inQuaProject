@@ -1,10 +1,13 @@
-import numpy as np, lib as l
+import lib as l
+import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import animation as ani
+import matplotlib.animation as ani
 
 # Define some things for plotting
-font = {'family': 'normal', 'weight': 'bold', 'size': 12}
+font = {'family': 'normal', 'weight': 'bold', 'size': 16}
 plt.rc('font', **font)
+plt.rc('text', usetex=True)
+plt.rcParams['text.latex.preamble'] = [r'\boldmath']
 
 #Variables and different starting states
 (E1,E2) = (l.eV,1000*l.eV)
@@ -93,4 +96,3 @@ plt.xlabel(r'$x$ [m]', fontsize=20)
 #Call the animator, frames =  number of pictures (max i), interval = duration of each picture (in ms)
 anim = ani.FuncAnimation(fig,animate,init_func=init,repeat=False,frames=3000,interval=1,blit=True)
 plt.show()
-
