@@ -1,22 +1,19 @@
 import numpy as np
 
-
 hbar = 1.05457e-34  # [Js] - Reduced Planck's constant
 me = 9.10938e-31  # [kg] - Electron mass
-dx = 1e-11
-E = hbar**2/(2*me*(1200*dx)**2)
+dx = 5e-11
+E = hbar**2/(2*me*(1000*dx)**2)*2e3
 # Sigma, expectation values at t = 0
 sigma = dx*10
-x0 = sigma*45  #Put the mean x at t=0 away from the walls
+x0 = sigma*50  #Put the mean x at t=0 away from the walls
 k0 = np.sqrt(2*me*E)/hbar  # wave number k [1/m]
 
 def V1(x):
 	return 0
 
-
 def V2(x):
-	return (x-x0*1.4)** 2
-
+	return 10*(x-x0*1.3)** 2
 
 def Hamilton(V, positions):
 	"""
@@ -42,7 +39,6 @@ def Hamilton(V, positions):
 
 	return H
 
-
 def startingState(positions):
 	"""
 	:param positions: numpy array of the positions over the interval
@@ -56,7 +52,6 @@ def startingState(positions):
 
 	# Return the starting state (gauss wave)
 	return normFac * gauss * planeWave
-
 
 def developCoeff(psiJ, positions):
 	"""
@@ -74,26 +69,19 @@ def developCoeff(psiJ, positions):
 		print("**error** psiJ and positions have different lengths")
 		return 0
 
-
-def expectation(X, positions, coeff, psiMatrix, E, t):
+def expectation(F, psiVec):
 	"""
-	:param X: expectation-variable as a function (define it in advance)
+	:param F: Operator for F as an array (define it in advance), containing F operated on psi(x,t) for all x at time t
 	:param positions: numpy array of x_n
-	:param coeff: numpy array of all the develop coefficients j (from j = 1 to N)
-	:param psiMatrix: Matrix of psiJ as colum-vectors
-	:param E: numpy array of all the eigenvalues (each possible energy)
-	:param t: at time t (number)
-	:return: the expecetation value of X at time t
+	:param psiVec: vector of psi(x,t) evaluated at every x_n at a time t
+	:return: the expectation value of X at time t
 	"""
-	# A psi-vector containing psi(x,t) for all positions at time t
-	Efac = np.exp(-1j * E * t / hbar)
-	psiVec = np.matmul(psiMatrix,Efac*coeff)
-
 	# Expectation
-	return np.dot(X(positions), np.absolute(psiVec)**2)*dx
-
+	a = np.dot(np.conjugate(psiVec),F)
+	# Discard the negligible imaginary part due to computation errors.
+	return np.real(a)*dx
 
 def sigmaAnalytical(t):
-	return np.sqrt((sigma)**2 + ((hbar*t)/(2*me*sigma))**2)
+    return np.sqrt((sigma)**2 + ((hbar*t)/(2*me*sigma))**2)
 
 
