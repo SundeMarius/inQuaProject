@@ -10,12 +10,12 @@ plt.rc('text', usetex=True)
 plt.rcParams['text.latex.preamble'] = [r'\boldmath']
 
 #Variables and different starting states
-(E1,E2) = (l.eV,10*l.eV)
-(sigma1,sigma2) = l.dx*62.5,l.dx*20
+(E1,E2) = (1*l.eV,1/16*l.eV)
+(sigma1,sigma2) = l.dx*62.5,l.dx*62.5
 (k01,k02) = (np.sqrt(2*l.me*E1)/l.hbar,np.sqrt(2*l.me*E2)/l.hbar)
 (v01,v02) = (k01*l.hbar/l.me,k02*l.hbar/l.me)
 t1 = np.array([2/4*n*l.dx/v01 for n in range(l.N)])
-t2 = np.array([3/5*n*l.dx/v02 for n in range(l.N)])
+t2 = np.array([2/4*n*l.dx/v02 for n in range(l.N)])
 
 #Solve the Shrodinger equation
 H = l.Hamilton(l.V2)
@@ -31,8 +31,8 @@ EX, EX2, EP, EP2 = np.zeros(l.N), np.zeros(l.N), np.zeros(l.N), np.zeros(l.N)
 
 for i in range(l.N):
     # A psi-vector containing psi(x,t) for all positions at time T
-    Efac = np.exp(-1j * E * t1[i] / l.hbar)
-    psiVec = np.matmul(psiMatrix, Efac*coeff1)
+    Efac = np.exp(-1j * E * t2[i] / l.hbar)
+    psiVec = np.matmul(psiMatrix, Efac*coeff2)
 
     #Operators for x, x**2, p and p**2, as arrays with operated psi(x,t) for all x at time t
     X = l.x*psiVec
@@ -53,11 +53,11 @@ for i in range(l.N):
 stdX = np.sqrt(abs(EX2-EX**2))
 stdP = np.sqrt(abs(EP2-EP**2))
 
-plt.plot(t1, stdP*stdX, label=r"$\Delta X\Delta P (t)$", c="crimson", lw=0.5)
-plt.axhline(l.hbar/2, c="blue")
-#plt.ylim(0,2*l.hbar)
-plt.title("Uskarphetsproduktet ")
+plt.semilogy(t2, stdP*stdX/(l.hbar/2), label=r"$\frac{2\Delta X\Delta P(t)}{\hbar}$", c="crimson", lw=1)
+plt.title("Uskarphetsproduktet")
 plt.legend(loc="best")
+plt.xlabel("$t$ [s]")
+plt.ylabel("[1]")
 plt.grid()
 plt.show()
 
@@ -74,7 +74,7 @@ def init():
     return line,
 
 #Declaring timestep
-dt = 2e-15
+dt = 1e-15
 
 #Animation function
 def animate(i):
@@ -82,7 +82,7 @@ def animate(i):
 
     #Calculating psi(x,t)
     Efac = np.exp(-1j * E * T / l.hbar)
-    Psi_t = np.matmul(psiMatrix, Efac * coeff1)
+    Psi_t = np.matmul(psiMatrix, Efac * coeff2)
 
     #probability-density
     rho_t = np.abs(Psi_t)**2
