@@ -10,7 +10,7 @@ plt.rc('text', usetex=True)
 plt.rcParams['text.latex.preamble'] = [r'\boldmath']
 
 #Variables and different starting states
-(E1,E2) = (l.eV,1000*l.eV)
+(E1,E2) = (1e-4*l.eV,1000*l.eV)
 (sigma1,sigma2) = l.dx*62.5,l.dx*62.5
 (k01,k02) = (np.sqrt(2*l.me*E1)/l.hbar,np.sqrt(2*l.me*E2)/l.hbar)
 (v01,v02) = (k01*l.hbar/l.me,k02*l.hbar/l.me)
